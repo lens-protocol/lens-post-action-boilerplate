@@ -55,6 +55,19 @@ Update the `.env` file with the correct values.
 
 ## Usage
 
+### Metadata Configuration <!-- omit in toc -->
+
+The contract uses metadata stored on IPFS to describe the action's interface and parameters. The metadata is defined directly in the deployment script (`deploy/deploy-simple-poll-vote-action.ts`) and contains:
+
+- Action name and description
+- Author information
+- Source repository
+- Execution parameters with their types and keccak256 keys
+
+The deployment script automatically uploads this metadata to IPFS when deploying the contract.
+
+To update the metadata, modify the metadata object in the deployment script.
+
 ### Compile <!-- omit in toc -->
 
 ```bash

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.26;
 
-import { IPostAction } from "contracts/extensions/actions/ActionHub.sol";
-import { KeyValue } from "contracts/core/types/Types.sol";
-import { OwnableMetadataBasedPostAction } from "contracts/actions/post/base/OwnableMetadataBasedPostAction.sol";
-import { IFeed } from "contracts/core/interfaces/IFeed.sol";
+import {IPostAction} from "contracts/extensions/actions/ActionHub.sol";
+import {KeyValue} from "contracts/core/types/Types.sol";
+import {OwnableMetadataBasedPostAction} from "contracts/actions/post/base/OwnableMetadataBasedPostAction.sol";
+import {IFeed} from "contracts/core/interfaces/IFeed.sol";
 
 /**
  * @title SimplePollVoteAction
@@ -12,6 +12,8 @@ import { IFeed } from "contracts/core/interfaces/IFeed.sol";
  *         Prevents double voting.
  */
 contract SimplePollVoteAction is OwnableMetadataBasedPostAction {
+    event PollVoted(address indexed voter, uint256 indexed postId, bool vote);
+
     // feed => postId => voter => hasVoted
     mapping(address => mapping(uint256 => mapping(address => bool)))
         private _hasVoted;
@@ -20,31 +22,25 @@ contract SimplePollVoteAction is OwnableMetadataBasedPostAction {
     mapping(address => mapping(uint256 => mapping(bool => uint256)))
         private _voteCounts;
 
-    event PollVoted(address indexed voter, uint256 indexed postId, bool vote);
-
     constructor(
         address actionHub,
-        address owner
-    )
-        OwnableMetadataBasedPostAction(
-            actionHub,
-            owner,
-            "ipfs://QmTv7qQgjVX5KbpNyDMDv5R98WsNJDseNCaxuSewD81fDu"
-        )
-    {}
+        address owner,
+        string memory metadataURI
+    ) OwnableMetadataBasedPostAction(actionHub, owner, metadataURI) {}
 
     /**
      * @notice Configures the SimplePollVote Action for a given post.
      * @param originalMsgSender The address initiating the configuration via the ActionHub. Must be post author.
      * @param feed The address of the feed contract where the post exists.
      * @param postId The ID of the post being configured.
+     * @param params Not used
      * @return bytes Empty bytes.
      */
     function _configure(
         address originalMsgSender,
         address feed,
         uint256 postId,
-        KeyValue[] calldata /* params */
+        KeyValue[] calldata params
     ) internal view override returns (bytes memory) {
         require(
             originalMsgSender == IFeed(feed).getPostAuthor(postId),
