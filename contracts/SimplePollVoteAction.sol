@@ -96,16 +96,16 @@ contract SimplePollVoteAction is OwnableMetadataBasedPostAction {
      * @notice Gets the vote counts for a specific post.
      * @param feed The address of the feed contract where the post exists.
      * @param postId The ID of the post to get vote counts for.
-     * @return ya The count of false votes
-     * @return nay The count of true votes
+     * @return ya The count of yes votes (true)
+     * @return nay The count of no votes (false)
      */
     function getVoteCounts(
         address feed,
         uint256 postId
     ) external view returns (uint256 ya, uint256 nay) {
         return (
-            _voteCounts[feed][postId][false],
-            _voteCounts[feed][postId][true]
+            _voteCounts[feed][postId][true],
+            _voteCounts[feed][postId][false]
         );
     }
 }
